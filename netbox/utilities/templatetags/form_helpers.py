@@ -2,6 +2,7 @@ from django import template
 
 __all__ = (
     'getfield',
+    'getfilterfield',
     'render_custom_fields',
     'render_errors',
     'render_field',
@@ -26,6 +27,15 @@ def getfield(form, fieldname):
         return form[fieldname]
     except KeyError:
         return None
+
+
+@register.filter()
+def getfilterfield(form, fieldname):
+    field = getfield(form, f'{fieldname}')
+    if field is not None:
+        return field
+    else:
+        return getfield(form, f'{fieldname}_id')
 
 
 @register.filter(name='widget_type')
@@ -53,6 +63,24 @@ def render_field(field, bulk_nullable=False, label=None):
     return {
         'field': field,
         'label': label or field.label,
+        'bulk_nullable': bulk_nullable,
+    }
+
+
+@register.inclusion_tag('form_helpers/render_field.html')
+def render_filter_field(field, bulk_nullable=False, label=None):
+    """
+    Render a single form field from template
+    """
+    if hasattr(field.field, 'widget'):
+        field.field.widget.attrs.update({
+            'hx-get': None,
+            'hx-target': '#object_list',
+            'hx-trigger': 'hidden.bs.dropdown from:closest .dropdown'
+        })
+    return {
+        'field': field,
+        'label': None,
         'bulk_nullable': bulk_nullable,
     }
 

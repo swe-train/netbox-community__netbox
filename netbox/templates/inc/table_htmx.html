@@ -1,4 +1,5 @@
 {% load django_tables2 %}
+{% load form_helpers %}
 <table{% if table.attrs %} {{ table.attrs.as_html }}{% endif %}>
   {% if table.show_header %}
     <thead>
@@ -21,9 +22,13 @@
                  hx-target="closest .htmx-container"
                  {% if not table.embedded %}hx-push-url="true"{% endif %}
               >{{ column.header }}</a>
+              {% include 'inc/table_header_filter_dropdown.html' with form_field=table.filterset_form|getfilterfield:column.name %}
             </th>
           {% else %}
-            <th {{ column.attrs.th.as_html }}>{{ column.header }}</th>
+            <th {{ column.attrs.th.as_html }}>
+              {{ column.header }}
+              {% include 'inc/table_header_filter_dropdown.html' with form_field=table.filterset_form|getfilterfield:column.name %}
+            </th>
           {% endif %}
         {% endfor %}
       </tr>
