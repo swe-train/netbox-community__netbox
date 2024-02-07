@@ -72,12 +72,16 @@ def render_field(field, bulk_nullable=False, label=None):
 @register.inclusion_tag('form_helpers/render_field.html')
 def render_filter_field(field, bulk_nullable=False, table=None, request=None):
     """
-    Render a single form field from template
+    Render a single form field from template for use in column headers
     """
     url = ""
+
+    # Build kwargs for querystring function
     kwargs = {
         field.name: None
     }
+
+    # Build request url
     if request and table.htmx_url:
         url = table.htmx_url + querystring(request, **kwargs)
     elif request:
