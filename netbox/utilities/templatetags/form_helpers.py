@@ -1,5 +1,6 @@
 from django import template
 
+
 __all__ = (
     'getfield',
     'getfilterfield',
@@ -10,6 +11,7 @@ __all__ = (
     'widget_type',
 )
 
+from utilities.templatetags.helpers import querystring
 
 register = template.Library()
 
@@ -68,13 +70,23 @@ def render_field(field, bulk_nullable=False, label=None):
 
 
 @register.inclusion_tag('form_helpers/render_field.html')
-def render_filter_field(field, bulk_nullable=False, label=None):
+def render_filter_field(field, bulk_nullable=False, table=None, request=None):
     """
     Render a single form field from template
     """
+    url = ""
+    kwargs = {
+        field.name: None
+    }
+    if request and table.htmx_url:
+        url = table.htmx_url + querystring(request, **kwargs)
+    elif request:
+        url = querystring(request, **kwargs)
+
     if hasattr(field.field, 'widget'):
         field.field.widget.attrs.update({
-            'hx-get': "",
+            'hx-get': url if url else '#',
+            'hx-push-url': "true",
             'hx-target': '#object_list',
             'hx-trigger': 'hidden.bs.dropdown from:closest .dropdown'
         })
