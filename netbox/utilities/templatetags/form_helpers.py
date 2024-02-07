@@ -74,7 +74,7 @@ def render_filter_field(field, bulk_nullable=False, label=None):
     """
     if hasattr(field.field, 'widget'):
         field.field.widget.attrs.update({
-            'hx-get': None,
+            'hx-get': "",
             'hx-target': '#object_list',
             'hx-trigger': 'hidden.bs.dropdown from:closest .dropdown'
         })
