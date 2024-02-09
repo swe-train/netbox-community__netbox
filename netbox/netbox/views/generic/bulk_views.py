@@ -160,9 +160,10 @@ class ObjectListView(BaseMultiObjectView, ActionsMixin, TableMixin):
         # Render the objects table
         table = self.get_table(self.queryset, request, has_bulk_actions)
 
-        filterset_form = self.filterset_form(request.GET, label_suffix='') if self.filterset_form else None
-
+        # Check for filterset_form on this view, if a form exists, apply to context and table, otherwise set to None
+        filterset_form = None
         if hasattr(self, 'filterset_form'):
+            filterset_form = self.filterset_form(request.GET, label_suffix='')
             table.filterset_form = filterset_form
 
         # If this is an HTMX request, return only the rendered table HTML

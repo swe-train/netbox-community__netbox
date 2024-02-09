@@ -7,6 +7,7 @@ __all__ = (
     'render_custom_fields',
     'render_errors',
     'render_field',
+    'render_filter_field',
     'render_form',
     'widget_type',
 )
