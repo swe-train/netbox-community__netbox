@@ -28,3 +28,9 @@ span.color-label {
   visibility: hidden;
   opacity: 0;
 }
+
+// Override column filter form dropdown
+.column-filter {
+  position: static;
+  display: inline;
+}
