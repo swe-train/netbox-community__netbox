@@ -59,45 +59,33 @@ def widget_type(field):
 #
 
 @register.inclusion_tag('form_helpers/render_field.html')
-def render_field(field, bulk_nullable=False, label=None):
+def render_field(field, bulk_nullable=False, label=None, table=None, request=None):
     """
     Render a single form field from template
     """
-    return {
-        'field': field,
-        'label': label or field.label,
-        'bulk_nullable': bulk_nullable,
-    }
-
-
-@register.inclusion_tag('form_helpers/render_field.html')
-def render_filter_field(field, bulk_nullable=False, table=None, request=None):
-    """
-    Render a single form field from template for use in column headers
-    """
     url = ""
 
-    # Build kwargs for querystring function
-    kwargs = {
-        field.name: None
-    }
+    # Handle filter forms
+    if table:
+        # Build kwargs for querystring function
+        kwargs = {field.name: None}
+        # Build request url
+        if request and table.htmx_url:
+            url = table.htmx_url + querystring(request, **kwargs)
+        elif request:
+            url = querystring(request, **kwargs)
+        # Set HTMX args
+        if hasattr(field.field, 'widget'):
+            field.field.widget.attrs.update({
+                'hx-get': url if url else '#',
+                'hx-push-url': "true",
+                'hx-target': '#object_list',
+                'hx-trigger': 'hidden.bs.dropdown from:closest .dropdown'
+            })
 
-    # Build request url
-    if request and table.htmx_url:
-        url = table.htmx_url + querystring(request, **kwargs)
-    elif request:
-        url = querystring(request, **kwargs)
-
-    if hasattr(field.field, 'widget'):
-        field.field.widget.attrs.update({
-            'hx-get': url if url else '#',
-            'hx-push-url': "true",
-            'hx-target': '#object_list',
-            'hx-trigger': 'hidden.bs.dropdown from:closest .dropdown'
-        })
     return {
         'field': field,
-        'label': None,
+        'label': label or field.label if not table else None,
         'bulk_nullable': bulk_nullable,
     }
 
