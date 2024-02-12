@@ -162,7 +162,7 @@ class ObjectListView(BaseMultiObjectView, ActionsMixin, TableMixin):
 
         # Check for filterset_form on this view, if a form exists, apply to context and table, otherwise set to None
         filterset_form = None
-        if request and hasattr(self, 'filterset_form'):
+        if hasattr(self, 'filterset_form') and self.filterset_form:
             filterset_form = self.filterset_form(request.GET, label_suffix='')
             table.filterset_form = filterset_form
 
