@@ -58,9 +58,22 @@ def widget_type(field):
 #
 
 @register.inclusion_tag('form_helpers/render_field.html')
-def render_field(field, bulk_nullable=False, label=None, table=None, request=None):
+def render_field(field, bulk_nullable=False, label=None):
     """
     Render a single form field from template
+    """
+
+    return {
+        'field': field,
+        'label': label or field.label,
+        'bulk_nullable': bulk_nullable,
+    }
+
+
+@register.inclusion_tag('form_helpers/render_field.html')
+def render_table_filter_field(field, table=None, request=None):
+    """
+    Render a single form field for table column filters from template
     """
     url = ""
 
@@ -74,18 +87,20 @@ def render_field(field, bulk_nullable=False, label=None, table=None, request=Non
         elif request:
             url = querystring(request, **kwargs)
         # Set HTMX args
-        if hasattr(field.field, 'widget'):
-            field.field.widget.attrs.update({
-                'hx-get': url if url else '#',
-                'hx-push-url': "true",
-                'hx-target': '#object_list',
-                'hx-trigger': 'hidden.bs.dropdown from:closest .dropdown'
-            })
+
+    if hasattr(field.field, 'widget'):
+        field.field.widget.attrs.update({
+            'id': f'table_filter_id_{field.name}',
+            'hx-get': url if url else '#',
+            'hx-push-url': "true",
+            'hx-target': '#object_list',
+            'hx-trigger': 'hidden.bs.dropdown from:closest .dropdown'
+        })
 
     return {
         'field': field,
-        'label': label or field.label if not table else None,
-        'bulk_nullable': bulk_nullable,
+        'label': None,
+        'bulk_nullable': False,
     }
 
 
