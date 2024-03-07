@@ -2,12 +2,11 @@ import json
 import re
 
 from django import forms
-from django.contrib.contenttypes.models import ContentType
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from core.forms.mixins import SyncedDataMixin
-from core.models import ContentType
+from core.models import ObjectType
 from dcim.models import DeviceRole, DeviceType, Location, Platform, Region, Site, SiteGroup
 from extras.choices import *
 from extras.models import *
@@ -39,13 +38,13 @@ __all__ = (
 
 
 class CustomFieldForm(forms.ModelForm):
-    content_types = ContentTypeMultipleChoiceField(
-        label=_('Content types'),
-        queryset=ContentType.objects.with_feature('custom_fields')
+    object_types = ContentTypeMultipleChoiceField(
+        label=_('Object types'),
+        queryset=ObjectType.objects.with_feature('custom_fields')
     )
     object_type = ContentTypeChoiceField(
         label=_('Object type'),
-        queryset=ContentType.objects.public(),
+        queryset=ObjectType.objects.public(),
         required=False,
         help_text=_("Type of the related object (for object/multi-object fields only)")
     )
@@ -56,7 +55,7 @@ class CustomFieldForm(forms.ModelForm):
 
     fieldsets = (
         (_('Custom Field'), (
-            'content_types', 'name', 'label', 'group_name', 'type', 'object_type', 'required', 'description',
+            'object_types', 'name', 'label', 'group_name', 'type', 'object_type', 'required', 'description',
         )),
         (_('Behavior'), ('search_weight', 'filter_logic', 'ui_visible', 'ui_editable', 'weight', 'is_cloneable')),
         (_('Values'), ('default', 'choice_set')),
@@ -123,13 +122,13 @@ class CustomFieldChoiceSetForm(forms.ModelForm):
 
 
 class CustomLinkForm(forms.ModelForm):
-    content_types = ContentTypeMultipleChoiceField(
-        label=_('Content types'),
-        queryset=ContentType.objects.with_feature('custom_links')
+    object_types = ContentTypeMultipleChoiceField(
+        label=_('Object types'),
+        queryset=ObjectType.objects.with_feature('custom_links')
     )
 
     fieldsets = (
-        (_('Custom Link'), ('name', 'content_types', 'weight', 'group_name', 'button_class', 'enabled', 'new_window')),
+        (_('Custom Link'), ('name', 'object_types', 'weight', 'group_name', 'button_class', 'enabled', 'new_window')),
         (_('Templates'), ('link_text', 'link_url')),
     )
 
@@ -152,9 +151,9 @@ class CustomLinkForm(forms.ModelForm):
 
 
 class ExportTemplateForm(SyncedDataMixin, forms.ModelForm):
-    content_types = ContentTypeMultipleChoiceField(
-        label=_('Content types'),
-        queryset=ContentType.objects.with_feature('export_templates')
+    object_types = ContentTypeMultipleChoiceField(
+        label=_('Object types'),
+        queryset=ObjectType.objects.with_feature('export_templates')
     )
     template_code = forms.CharField(
         label=_('Template code'),
@@ -163,7 +162,7 @@ class ExportTemplateForm(SyncedDataMixin, forms.ModelForm):
     )
 
     fieldsets = (
-        (_('Export Template'), ('name', 'content_types', 'description', 'template_code')),
+        (_('Export Template'), ('name', 'object_types', 'description', 'template_code')),
         (_('Data Source'), ('data_source', 'data_file', 'auto_sync_enabled')),
         (_('Rendering'), ('mime_type', 'file_extension', 'as_attachment')),
     )
@@ -193,14 +192,14 @@ class ExportTemplateForm(SyncedDataMixin, forms.ModelForm):
 
 class SavedFilterForm(forms.ModelForm):
     slug = SlugField()
-    content_types = ContentTypeMultipleChoiceField(
-        label=_('Content types'),
-        queryset=ContentType.objects.all()
+    object_types = ContentTypeMultipleChoiceField(
+        label=_('Object types'),
+        queryset=ObjectType.objects.all()
     )
     parameters = JSONField()
 
     fieldsets = (
-        (_('Saved Filter'), ('name', 'slug', 'content_types', 'description', 'weight', 'enabled', 'shared')),
+        (_('Saved Filter'), ('name', 'slug', 'object_types', 'description', 'weight', 'enabled', 'shared')),
         (_('Parameters'), ('parameters',)),
     )
 
@@ -221,7 +220,7 @@ class SavedFilterForm(forms.ModelForm):
 class BookmarkForm(forms.ModelForm):
     object_type = ContentTypeChoiceField(
         label=_('Object type'),
-        queryset=ContentType.objects.with_feature('bookmarks')
+        queryset=ObjectType.objects.with_feature('bookmarks')
     )
 
     class Meta:
@@ -249,9 +248,9 @@ class WebhookForm(NetBoxModelForm):
 
 
 class EventRuleForm(NetBoxModelForm):
-    content_types = ContentTypeMultipleChoiceField(
-        label=_('Content types'),
-        queryset=ContentType.objects.with_feature('event_rules'),
+    object_types = ContentTypeMultipleChoiceField(
+        label=_('Object types'),
+        queryset=ObjectType.objects.with_feature('event_rules'),
     )
     action_choice = forms.ChoiceField(
         label=_('Action choice'),
@@ -267,7 +266,7 @@ class EventRuleForm(NetBoxModelForm):
     )
 
     fieldsets = (
-        (_('Event Rule'), ('name', 'description', 'content_types', 'enabled', 'tags')),
+        (_('Event Rule'), ('name', 'description', 'object_types', 'enabled', 'tags')),
         (_('Events'), ('type_create', 'type_update', 'type_delete', 'type_job_start', 'type_job_end')),
         (_('Conditions'), ('conditions',)),
         (_('Action'), (
@@ -278,7 +277,7 @@ class EventRuleForm(NetBoxModelForm):
     class Meta:
         model = EventRule
         fields = (
-            'content_types', 'name', 'description', 'type_create', 'type_update', 'type_delete', 'type_job_start',
+            'object_types', 'name', 'description', 'type_create', 'type_update', 'type_delete', 'type_job_start',
             'type_job_end', 'enabled', 'conditions', 'action_type', 'action_object_type', 'action_object_id',
             'action_data', 'comments', 'tags'
         )
@@ -297,20 +296,16 @@ class EventRuleForm(NetBoxModelForm):
         }
 
     def init_script_choice(self):
-        choices = []
-        for module in ScriptModule.objects.all():
-            scripts = []
-            for script_name in module.scripts.keys():
-                name = f"{str(module.pk)}:{script_name}"
-                scripts.append((name, script_name))
-            if scripts:
-                choices.append((str(module), scripts))
-        self.fields['action_choice'].choices = choices
-
-        if self.instance.action_type == EventRuleActionChoices.SCRIPT and self.instance.action_parameters:
-            scriptmodule_id = self.instance.action_object_id
-            script_name = self.instance.action_parameters.get('script_name')
-            self.fields['action_choice'].initial = f'{scriptmodule_id}:{script_name}'
+        initial = None
+        if self.instance.action_type == EventRuleActionChoices.SCRIPT:
+            script_id = get_field_value(self, 'action_object_id')
+            initial = Script.objects.get(pk=script_id) if script_id else None
+        self.fields['action_choice'] = DynamicModelChoiceField(
+            label=_('Script'),
+            queryset=Script.objects.all(),
+            required=True,
+            initial=initial
+        )
 
     def init_webhook_choice(self):
         initial = None
@@ -343,37 +338,24 @@ class EventRuleForm(NetBoxModelForm):
         action_choice = self.cleaned_data.get('action_choice')
         # Webhook
         if self.cleaned_data.get('action_type') == EventRuleActionChoices.WEBHOOK:
-            self.cleaned_data['action_object_type'] = ContentType.objects.get_for_model(action_choice)
+            self.cleaned_data['action_object_type'] = ObjectType.objects.get_for_model(action_choice)
             self.cleaned_data['action_object_id'] = action_choice.id
         # Script
         elif self.cleaned_data.get('action_type') == EventRuleActionChoices.SCRIPT:
-            self.cleaned_data['action_object_type'] = ContentType.objects.get_for_model(
-                ScriptModule,
+            self.cleaned_data['action_object_type'] = ObjectType.objects.get_for_model(
+                Script,
                 for_concrete_model=False
             )
-            module_id, script_name = action_choice.split(":", maxsplit=1)
-            self.cleaned_data['action_object_id'] = module_id
+            self.cleaned_data['action_object_id'] = action_choice.id
 
         return self.cleaned_data
-
-    def save(self, *args, **kwargs):
-        # Set action_parameters on the instance
-        if self.cleaned_data['action_type'] == EventRuleActionChoices.SCRIPT:
-            module_id, script_name = self.cleaned_data.get('action_choice').split(":", maxsplit=1)
-            self.instance.action_parameters = {
-                'script_name': script_name,
-            }
-        else:
-            self.instance.action_parameters = None
-
-        return super().save(*args, **kwargs)
 
 
 class TagForm(forms.ModelForm):
     slug = SlugField()
     object_types = ContentTypeMultipleChoiceField(
         label=_('Object types'),
-        queryset=ContentType.objects.with_feature('tags'),
+        queryset=ObjectType.objects.with_feature('tags'),
         required=False
     )
 
