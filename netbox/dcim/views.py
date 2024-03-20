@@ -727,7 +727,6 @@ class RackNonRackedView(generic.ObjectChildrenView):
 class RackEditView(generic.ObjectEditView):
     queryset = Rack.objects.all()
     form = forms.RackForm
-    template_name = 'dcim/rack_edit.html'
 
 
 @register_model_view(Rack, 'delete')
@@ -1079,7 +1078,7 @@ class DeviceTypeInventoryItemsView(DeviceTypeComponentsView):
     tab = ViewTab(
         label=_('Inventory Items'),
         badge=lambda obj: obj.inventory_item_template_count,
-        permission='dcim.view_invenotryitemtemplate',
+        permission='dcim.view_inventoryitemtemplate',
         weight=590,
         hide_if_empty=True
     )
@@ -2925,14 +2924,12 @@ class InventoryItemView(generic.ObjectView):
 class InventoryItemEditView(generic.ObjectEditView):
     queryset = InventoryItem.objects.all()
     form = forms.InventoryItemForm
-    template_name = 'dcim/inventoryitem_edit.html'
 
 
 class InventoryItemCreateView(generic.ComponentCreateView):
     queryset = InventoryItem.objects.all()
     form = forms.InventoryItemCreateForm
     model_form = forms.InventoryItemForm
-    template_name = 'dcim/inventoryitem_edit.html'
 
 
 @register_model_view(InventoryItem, 'delete')
