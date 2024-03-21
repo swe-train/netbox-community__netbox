@@ -67,7 +67,7 @@ class RenderConfigMixin(ConfigTemplateRenderMixin):
     Override initial() to save a copy of the queryset for "un-restricting" the queryset when rendering.
     """
     def initial(self, request, *args, **kwargs):
-        self.original_qs = self.queryset
+        self.original_queryset = self.queryset
         super().initial(request, *args, **kwargs)
 
     """
