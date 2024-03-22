@@ -36,11 +36,7 @@ def getfield(form, fieldname):
 
 @register.filter()
 def get_filter_field(form, fieldname):
-    field = getfield(form, f'{fieldname}')
-    if field is not None:
-        return field
-    else:
-        return getfield(form, f'{fieldname}_id')
+    return getfield(form, f'{fieldname}') or getfield(form, f'{fieldname}_id')
 
 
 @register.filter(name='widget_type')
