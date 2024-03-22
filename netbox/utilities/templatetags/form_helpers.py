@@ -136,7 +136,7 @@ def render_field(field, bulk_nullable=False, label=None):
 
 
 @register.inclusion_tag('form_helpers/render_field.html')
-def render_table_filter_field(field, table=None, request=None):
+def render_table_filter_field(field, table, request):
     """
     Render a single form field for table column filters from template
     """

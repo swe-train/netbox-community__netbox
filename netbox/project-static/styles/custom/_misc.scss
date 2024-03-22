@@ -29,8 +29,13 @@ span.color-label {
   opacity: 0;
 }
 
-// Override column filter form dropdown
+// Override bootstrap "dropdown" positioning and display for column filters
 .column-filter {
   position: static;
   display: inline;
+}
+
+// Override mdi font-size to adjust filter icon size
+.btn.dropdown-toggle > .mdi-filter-settings {
+  font-size: 1.25rem;
 }
