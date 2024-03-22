@@ -6,7 +6,7 @@ from utilities.forms.rendering import FieldSet, InlineFields, ObjectAttribute, T
 
 __all__ = (
     'getfield',
-    'getfilterfield',
+    'get_filter_field',
     'render_custom_fields',
     'render_errors',
     'render_field',
@@ -35,7 +35,7 @@ def getfield(form, fieldname):
 
 
 @register.filter()
-def getfilterfield(form, fieldname):
+def get_filter_field(form, fieldname):
     field = getfield(form, f'{fieldname}')
     if field is not None:
         return field

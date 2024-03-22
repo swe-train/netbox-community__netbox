@@ -17,8 +17,8 @@
                   ><i class="mdi mdi-close"></i></a>
                 </div>
               {% endif %}
-              {%  if table.filterset_form %}
-                {% include 'inc/table_header_filter_dropdown.html' with form_field=table.filterset_form|getfilterfield:column.name %}
+              {% if table.filterset_form %}
+                {% include 'inc/table_header_filter_dropdown.html' with form_field=table.filterset_form|get_filter_field:column.name %}
               {% endif %}
               <a href="#"
                  hx-get="{{ table.htmx_url }}{% querystring table.prefixed_order_by_field=column.order_by_alias.next %}"
@@ -28,8 +28,8 @@
             </th>
           {% else %}
             <th {{ column.attrs.th.as_html }}>
-              {%  if table.filterset_form %}
-                {% include 'inc/table_header_filter_dropdown.html' with form_field=table.filterset_form|getfilterfield:column.name %}
+              {% if table.filterset_form %}
+                {% include 'inc/table_header_filter_dropdown.html' with form_field=table.filterset_form|get_filter_field:column.name %}
               {% endif %}
               {{ column.header }}
             </th>
