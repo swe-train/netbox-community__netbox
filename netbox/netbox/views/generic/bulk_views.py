@@ -181,7 +181,9 @@ class ObjectListView(BaseMultiObjectView, ActionsMixin, TableMixin):
                 if 'pk' in table.base_columns:
                     table.columns.hide('pk')
             return render(request, 'htmx/table.html', {
+                'model': model,
                 'table': table,
+                'filter_form': filterset_form,
             })
 
         context = {
