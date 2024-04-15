@@ -1,4 +1,5 @@
 import django_filters
+
 from django.contrib.auth import get_user_model
 from django.db.models import Q
 from django.utils.translation import gettext as _
@@ -39,7 +40,10 @@ class GroupFilterSet(BaseFilterSet):
     def search(self, queryset, name, value):
         if not value.strip():
             return queryset
-        return queryset.filter(name__icontains=value)
+        return queryset.filter(
+            Q(name__icontains=value) |
+            Q(description__icontains=value)
+        )
 
 
 class UserFilterSet(BaseFilterSet):

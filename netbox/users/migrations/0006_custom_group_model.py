@@ -32,11 +32,12 @@ class Migration(migrations.Migration):
                 ('permissions', models.ManyToManyField(blank=True, related_name='groups', related_query_name='group', to='auth.permission')),
             ],
             options={
+                'ordering': ('name',),
                 'verbose_name': 'group',
                 'verbose_name_plural': 'groups',
             },
             managers=[
-                ('objects', users.models.NetBoxGroupManager()),
+                ('objects', users.models.GroupManager()),
             ],
         ),
 

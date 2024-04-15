@@ -110,7 +110,7 @@ class UserBulkDeleteView(generic.BulkDeleteView):
 #
 
 class GroupListView(generic.ObjectListView):
-    queryset = Group.objects.annotate(users_count=Count('user'))
+    queryset = Group.objects.annotate(users_count=Count('user')).order_by('name')
     filterset = filtersets.GroupFilterSet
     filterset_form = forms.GroupFilterForm
     table = tables.GroupTable
@@ -138,8 +138,15 @@ class GroupBulkImportView(generic.BulkImportView):
     model_form = forms.GroupImportForm
 
 
+class GroupBulkEditView(generic.BulkEditView):
+    queryset = Group.objects.all()
+    filterset = filtersets.GroupFilterSet
+    table = tables.GroupTable
+    form = forms.GroupBulkEditForm
+
+
 class GroupBulkDeleteView(generic.BulkDeleteView):
-    queryset = Group.objects.annotate(users_count=Count('user'))
+    queryset = Group.objects.annotate(users_count=Count('user')).order_by('name')
     filterset = filtersets.GroupFilterSet
     table = tables.GroupTable
 

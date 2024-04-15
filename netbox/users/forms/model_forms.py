@@ -12,19 +12,19 @@ from ipam.validators import prefix_validator
 from netbox.preferences import PREFERENCES
 from users.constants import *
 from users.models import *
+from utilities.data import flatten_dict
 from utilities.forms.fields import ContentTypeMultipleChoiceField, DynamicModelMultipleChoiceField
 from utilities.forms.rendering import FieldSet
 from utilities.forms.widgets import DateTimePicker
 from utilities.permissions import qs_filter_from_constraints
-from utilities.utils import flatten_dict
 
 __all__ = (
-    'UserTokenForm',
     'GroupForm',
     'ObjectPermissionForm',
     'TokenForm',
     'UserConfigForm',
     'UserForm',
+    'UserTokenForm',
     'TokenForm',
 )
 
@@ -55,7 +55,8 @@ class UserConfigFormMetaclass(forms.models.ModelFormMetaclass):
 class UserConfigForm(forms.ModelForm, metaclass=UserConfigFormMetaclass):
     fieldsets = (
         FieldSet(
-            'locale.language', 'pagination.per_page', 'pagination.placement', 'ui.colormode', name=_('User Interface')
+            'locale.language', 'pagination.per_page', 'pagination.placement', 'ui.colormode', 'ui.htmx_navigation',
+            name=_('User Interface')
         ),
         FieldSet('data_format', name=_('Miscellaneous')),
     )
@@ -202,18 +203,12 @@ class UserForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
 
         if self.instance.pk:
-            # Populate assigned permissions
-            self.fields['object_permissions'].initial = self.instance.object_permissions.values_list('id', flat=True)
-
             # Password fields are optional for existing Users
             self.fields['password'].required = False
             self.fields['confirm_password'].required = False
 
     def save(self, *args, **kwargs):
         instance = super().save(*args, **kwargs)
-
-        # Update assigned permissions
-        instance.object_permissions.set(self.cleaned_data['object_permissions'])
 
         # On edit, check if we have to save the password
         if self.cleaned_data.get('password'):
@@ -242,7 +237,7 @@ class GroupForm(forms.ModelForm):
     )
 
     fieldsets = (
-        FieldSet('name'),
+        FieldSet('name', 'description'),
         FieldSet('users', name=_('Users')),
         FieldSet('object_permissions', name=_('Permissions')),
     )
@@ -250,7 +245,7 @@ class GroupForm(forms.ModelForm):
     class Meta:
         model = Group
         fields = [
-            'name', 'users', 'object_permissions',
+            'name', 'description', 'users', 'object_permissions',
         ]
 
     def __init__(self, *args, **kwargs):
@@ -259,14 +254,12 @@ class GroupForm(forms.ModelForm):
         # Populate assigned users and permissions
         if self.instance.pk:
             self.fields['users'].initial = self.instance.users.values_list('id', flat=True)
-            self.fields['object_permissions'].initial = self.instance.object_permissions.values_list('id', flat=True)
 
     def save(self, *args, **kwargs):
         instance = super().save(*args, **kwargs)
 
-        # Update assigned users and permissions
+        # Update assigned users
         instance.users.set(self.cleaned_data['users'])
-        instance.object_permissions.set(self.cleaned_data['object_permissions'])
 
         return instance
 
@@ -334,9 +327,10 @@ class ObjectPermissionForm(forms.ModelForm):
         # Make the actions field optional since the form uses it only for non-CRUD actions
         self.fields['actions'].required = False
 
-        # Order group and user fields
-        self.fields['groups'].queryset = self.fields['groups'].queryset.order_by('name')
-        self.fields['users'].queryset = self.fields['users'].queryset.order_by('username')
+        # Populate assigned users and groups
+        if self.instance.pk:
+            self.fields['groups'].initial = self.instance.groups.values_list('id', flat=True)
+            self.fields['users'].initial = self.instance.users.values_list('id', flat=True)
 
         # Check the appropriate checkboxes when editing an existing ObjectPermission
         if self.instance.pk:
@@ -380,3 +374,12 @@ class ObjectPermissionForm(forms.ModelForm):
                     raise forms.ValidationError({
                         'constraints': _('Invalid filter for {model}: {error}').format(model=model, error=e)
                     })
+
+    def save(self, *args, **kwargs):
+        instance = super().save(*args, **kwargs)
+
+        # Update assigned users and groups
+        instance.users.set(self.cleaned_data['users'])
+        instance.groups.set(self.cleaned_data['groups'])
+
+        return instance

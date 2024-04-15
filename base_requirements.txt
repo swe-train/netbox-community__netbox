@@ -14,18 +14,13 @@ django-debug-toolbar
 # https://github.com/carltongibson/django-filter/blob/main/CHANGES.rst
 django-filter
 
-# Django debug toolbar extension with support for GraphiQL
-# https://github.com/flavors/django-graphiql-debug-toolbar/blob/main/CHANGES.rst
-django-graphiql-debug-toolbar
-
 # HTMX utilities for Django
 # https://django-htmx.readthedocs.io/en/latest/changelog.html
 django-htmx
 
 # Modified Preorder Tree Traversal (recursive nesting of objects)
-# Pinned to 0.14.0; 0.15.0 requires Python 3.9+
 # https://github.com/django-mptt/django-mptt/blob/main/CHANGELOG.rst
-django-mptt==0.14.0
+django-mptt
 
 # Context managers for PostgreSQL advisory locks
 # https://github.com/Xof/django-pglocks/blob/master/CHANGES.txt
@@ -74,11 +69,6 @@ drf-spectacular-sidecar
 # RSS feed parser
 # https://github.com/kurtmckee/feedparser/blob/develop/CHANGELOG.rst
 feedparser
-
-# Django wrapper for Graphene (GraphQL support)
-# https://github.com/graphql-python/graphene-django/releases
-# Pinned to v3.0.0 for GraphiQL UI issue (see #12762)
-graphene_django==3.0.0
 
 # WSGI HTTP server
 # https://docs.gunicorn.org/en/latest/news.html
@@ -136,8 +126,17 @@ social-auth-core
 # https://github.com/python-social-auth/social-app-django/blob/master/CHANGELOG.md
 social-auth-app-django
 
+# Strawberry GraphQL
+# https://github.com/strawberry-graphql/strawberry/blob/main/CHANGELOG.md
+strawberry-graphql
+
+# Strawberry GraphQL Django extension
+# https://github.com/strawberry-graphql/strawberry-django/blob/main/CHANGELOG.md
+# Pinned per #15574
+strawberry-graphql-django==0.34.0
+
 # SVG image rendering (used for rack elevations)
-# hhttps://github.com/mozman/svgwrite/blob/master/NEWS.rst
+# https://github.com/mozman/svgwrite/blob/master/NEWS.rst
 svgwrite
 
 # Tabular dataset library (for table-based exports)

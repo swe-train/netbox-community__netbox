@@ -158,7 +158,6 @@ def render_table_filter_field(field, table, request):
             'id': f'table_filter_id_{field.name}',
             'hx-get': url if url else '#',
             'hx-push-url': "true",
-            'hx-target': '#object_list',
             'hx-trigger': 'hidden.bs.dropdown from:closest .dropdown'
         })
 
