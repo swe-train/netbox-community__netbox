@@ -36,6 +36,12 @@ span.color-label {
 }
 
 // Override mdi font-size to adjust filter icon size
-.btn.dropdown-toggle > .mdi-filter-settings {
-  font-size: 1.25rem;
+.column-filter.dropdown > .dropdown-toggle > .mdi-filter-settings {
+  font-size: .625rem;
 }
+
+.column-filter.dropdown > .dropdown-menu {
+  max-width: 300px;
+}
+
+.column-filter.dropdown-toggle:after { content: none }

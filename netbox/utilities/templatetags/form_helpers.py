@@ -151,8 +151,8 @@ def render_table_filter_field(field, table, request):
             url = table.htmx_url + querystring(request, **kwargs)
         elif request:
             url = querystring(request, **kwargs)
-        # Set HTMX args
 
+    # Set HTMX args
     if hasattr(field.field, 'widget'):
         field.field.widget.attrs.update({
             'id': f'table_filter_id_{field.name}',
