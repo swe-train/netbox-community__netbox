@@ -11,6 +11,7 @@ from django.db.models.fields.reverse_related import ManyToManyRel
 from django.forms import HiddenInput, ModelMultipleChoiceField, MultipleHiddenInput
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext as _
@@ -180,10 +181,14 @@ class ObjectListView(BaseMultiObjectView, ActionsMixin, TableMixin):
                 # Hide selection checkboxes
                 if 'pk' in table.base_columns:
                     table.columns.hide('pk')
-            return render(request, 'htmx/table.html', {
+
+            applied_filters = render_to_string('inc/applied_filters_pane.html', {
                 'model': model,
-                'table': table,
                 'filter_form': filterset_form,
+            }, request)
+            return render(request, 'htmx/table.html', {
+                'table': table,
+                'applied_filters': applied_filters,
             })
 
         context = {
