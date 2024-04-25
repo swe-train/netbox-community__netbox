@@ -2,8 +2,8 @@
 {% load helpers %}
 {% load render_table from django_tables2 %}
 
-{# Applied filters for OOB Swap #}
-{{ applied_filters }}
+{# OOB Swaps to update various components #}
+{{ oob_swaps }}
 
 {% with preferences|get_key:"pagination.placement" as paginator_placement %}
   {% if paginator_placement == 'top' or paginator_placement == 'both' %}
