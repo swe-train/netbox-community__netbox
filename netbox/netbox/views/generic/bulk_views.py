@@ -181,14 +181,13 @@ class ObjectListView(BaseMultiObjectView, ActionsMixin, TableMixin):
                 # Hide selection checkboxes
                 if 'pk' in table.base_columns:
                     table.columns.hide('pk')
-            oob_swaps = []
-            oob_swaps.append(render_to_string('inc/applied_filters_pane.html', {
+            filter_chits = render_to_string('inc/applied_filters_pane.html', {
                 'model': model,
                 'filter_form': filterset_form,
-            }, request))
+            }, request)
             return render(request, 'htmx/table.html', {
                 'table': table,
-                'oob_swaps': "".join(oob_swaps),
+                'filter_chits': filter_chits,
             })
 
         context = {

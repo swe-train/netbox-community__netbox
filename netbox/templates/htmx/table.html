@@ -3,7 +3,7 @@
 {% load render_table from django_tables2 %}
 
 {# OOB Swaps to update various components #}
-{{ oob_swaps }}
+{{ filter_chits }}
 
 {% with preferences|get_key:"pagination.placement" as paginator_placement %}
   {% if paginator_placement == 'top' or paginator_placement == 'both' %}
