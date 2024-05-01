@@ -43,6 +43,7 @@ class ReportModule(PythonModuleMixin, JobsMixin, ManagedFile):
 
     class Meta:
         proxy = True
+        ordering = ('file_root', 'file_path')
         verbose_name = _('report module')
         verbose_name_plural = _('report modules')
 
@@ -52,7 +53,7 @@ class ReportModule(PythonModuleMixin, JobsMixin, ManagedFile):
     def __str__(self):
         return self.python_name
 
-    @cached_property
+    @property
     def reports(self):
 
         def _get_name(cls):
