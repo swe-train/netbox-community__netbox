@@ -390,7 +390,10 @@ class DeviceConsolePortTable(ConsolePortTable):
         )
         default_columns = ('pk', 'name', 'label', 'type', 'speed', 'description', 'cable', 'connection')
         row_attrs = {
-            'class': get_cabletermination_row_class
+            'data-name': lambda record: record.name,
+            'data-mark-connected': lambda record: "true" if record.mark_connected else "false",
+            'data-cable-status': lambda record: record.cable.status if record.cable else "",
+            'data-type': lambda record: record.type
         }
 
 
@@ -435,7 +438,10 @@ class DeviceConsoleServerPortTable(ConsoleServerPortTable):
         )
         default_columns = ('pk', 'name', 'label', 'type', 'speed', 'description', 'cable', 'connection')
         row_attrs = {
-            'class': get_cabletermination_row_class
+            'data-name': lambda record: record.name,
+            'data-mark-connected': lambda record: "true" if record.mark_connected else "false",
+            'data-cable-status': lambda record: record.cable.status if record.cable else "",
+            'data-type': lambda record: record.type
         }
 
 
@@ -489,7 +495,10 @@ class DevicePowerPortTable(PowerPortTable):
             'pk', 'name', 'label', 'type', 'maximum_draw', 'allocated_draw', 'description', 'cable', 'connection',
         )
         row_attrs = {
-            'class': get_cabletermination_row_class
+            'data-name': lambda record: record.name,
+            'data-mark-connected': lambda record: "true" if record.mark_connected else "false",
+            'data-cable-status': lambda record: record.cable.status if record.cable else "",
+            'data-type': lambda record: record.type
         }
 
 
@@ -540,7 +549,10 @@ class DevicePowerOutletTable(PowerOutletTable):
             'pk', 'name', 'label', 'type', 'power_port', 'feed_leg', 'description', 'cable', 'connection',
         )
         row_attrs = {
-            'class': get_cabletermination_row_class
+            'data-name': lambda record: record.name,
+            'data-mark-connected': lambda record: "true" if record.mark_connected else "false",
+            'data-cable-status': lambda record: record.cable.status if record.cable else "",
+            'data-type': lambda record: record.type
         }
 
 
@@ -743,7 +755,10 @@ class DeviceFrontPortTable(FrontPortTable):
             'pk', 'name', 'label', 'type', 'rear_port', 'rear_port_position', 'description', 'cable', 'link_peer',
         )
         row_attrs = {
-            'class': get_cabletermination_row_class
+            'data-name': lambda record: record.name,
+            'data-mark-connected': lambda record: "true" if record.mark_connected else "false",
+            'data-cable-status': lambda record: record.cable.status if record.cable else "",
+            'data-type': lambda record: record.type
         }
 
 
@@ -793,7 +808,10 @@ class DeviceRearPortTable(RearPortTable):
             'pk', 'name', 'label', 'type', 'positions', 'description', 'cable', 'link_peer',
         )
         row_attrs = {
-            'class': get_cabletermination_row_class
+            'data-name': lambda record: record.name,
+            'data-mark-connected': lambda record: "true" if record.mark_connected else "false",
+            'data-cable-status': lambda record: record.cable.status if record.cable else "",
+            'data-type': lambda record: record.type
         }
 
 
