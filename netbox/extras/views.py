@@ -17,6 +17,7 @@ from dcim.models import Device, DeviceRole, Platform
 from extras.dashboard.forms import DashboardWidgetAddForm, DashboardWidgetForm
 from extras.dashboard.utils import get_widget_class
 from netbox.constants import DEFAULT_ACTION_PERMISSIONS
+from netbox.tables import columns
 from netbox.views import generic
 from netbox.views.generic.mixins import TableMixin
 from utilities.data import shallow_compare_dict
@@ -1126,9 +1127,15 @@ class ScriptJobsView(generic.ObjectView):
         jobs_table = JobTable(
             data=script.jobs.all(),
             orderable=False,
-            user=request.user
+            user=request.user,
+            extra_columns=[(
+                'result', columns.TemplateColumn(
+                    template_code='<a href="{% url "extras:script_result" job_pk=record.pk %}">{{ record.completed }}</a>'
+                )
+            ),]
         )
         jobs_table.configure(request)
+        jobs_table.columns.show('result')
 
         return render(request, 'extras/script/jobs.html', {
             'script': script,
