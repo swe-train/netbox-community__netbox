@@ -1124,16 +1124,19 @@ class ScriptJobsView(generic.ObjectView):
     def get(self, request, **kwargs):
         script = self.get_object(**kwargs)
 
+        result_column = columns.TemplateColumn(
+            template_code='<a href="{% url "extras:script_result" job_pk=record.pk %}">'
+                          '{{ record.completed|isodatetime }}</a>',
+            verbose_name=_('Result')
+        )
+
         jobs_table = JobTable(
             data=script.jobs.all(),
             orderable=False,
             user=request.user,
-            extra_columns=[(
-                'result', columns.TemplateColumn(
-                    template_code='<a href="{% url "extras:script_result" job_pk=record.pk %}">{{ record.completed|isodatetime }}</a>',
-                    verbose_name=_('Result')
-                )
-            ),]
+            extra_columns=[
+                ('result', result_column),
+            ]
         )
         jobs_table.configure(request)
         jobs_table.columns.show('result')
