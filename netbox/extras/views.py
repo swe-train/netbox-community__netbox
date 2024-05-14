@@ -1130,7 +1130,8 @@ class ScriptJobsView(generic.ObjectView):
             user=request.user,
             extra_columns=[(
                 'result', columns.TemplateColumn(
-                    template_code='<a href="{% url "extras:script_result" job_pk=record.pk %}">{{ record.completed }}</a>'
+                    template_code='<a href="{% url "extras:script_result" job_pk=record.pk %}">{{ record.completed|isodatetime }}</a>',
+                    verbose_name=_('Result')
                 )
             ),]
         )
