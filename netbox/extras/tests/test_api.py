@@ -777,8 +777,10 @@ class ScriptTest(APITestCase):
             is_executable=True,
         )
 
-    def python_class(self):
-        return self.TestScriptClass
+    def get_vars(self, *args):
+        return {
+            k: v.__class__.__name__ for k, v in self.TestScriptClass._get_vars().items()
+        }
 
     def get_test_script(self, *args):
         module = ScriptModule.objects.first()
@@ -790,6 +792,8 @@ class ScriptTest(APITestCase):
         # Monkey-patch the Script model to return our TestScriptClass above
         from extras.api.views import ScriptViewSet
         ScriptViewSet._get_script = self.get_test_script
+        from extras.api.serializers_.scripts import ScriptSerializer
+        ScriptSerializer.get_vars = self.get_vars
 
     def test_get_script(self):
         module = ScriptModule.objects.get(
