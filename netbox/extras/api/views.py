@@ -1,3 +1,4 @@
+from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django_rq.queues import get_connection
 from rest_framework import status
@@ -13,7 +14,7 @@ from rq import Worker
 from core.models import Job, ObjectType
 from extras import filtersets
 from extras.models import *
-from extras.scripts import run_script
+from extras.scripts import get_module_and_script, run_script
 from netbox.api.authentication import IsAuthenticatedOrLoginNotRequired
 from netbox.api.features import SyncedDataMixin
 from netbox.api.metadata import ContentTypeMetadata
@@ -215,21 +216,33 @@ class ScriptViewSet(ModelViewSet):
     _ignore_model_permissions = True
     lookup_value_regex = '[^/]+'  # Allow dots
 
+    def _get_script(self, pk):
+        try:
+            module_name, script_name = pk.split('.', maxsplit=1)
+        except ValueError:
+            raise Http404
+
+        module, script = get_module_and_script(module_name, script_name)
+        if script is None:
+            raise Http404
+
+        return module, script
+
     def retrieve(self, request, pk):
-        script = get_object_or_404(self.queryset, pk=pk)
+        module, script = self._get_script(pk)
         serializer = serializers.ScriptDetailSerializer(script, context={'request': request})
 
         return Response(serializer.data)
 
     def post(self, request, pk):
         """
-        Run a Script identified by the id and return the pending Job as the result
+        Run a Script identified by the name and return the pending Job as the result
         """
 
         if not request.user.has_perm('extras.run_script'):
             raise PermissionDenied("This user does not have permission to run scripts.")
 
-        script = get_object_or_404(self.queryset, pk=pk)
+        module, script = self._get_script(pk)
         input_serializer = serializers.ScriptInputSerializer(
             data=request.data,
             context={'script': script}

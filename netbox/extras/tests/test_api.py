@@ -780,12 +780,16 @@ class ScriptTest(APITestCase):
     def python_class(self):
         return self.TestScriptClass
 
+    def get_test_script(self, *args):
+        module = ScriptModule.objects.first()
+        return module, module.scripts.first()
+
     def setUp(self):
         super().setUp()
 
         # Monkey-patch the Script model to return our TestScriptClass above
         from extras.api.views import ScriptViewSet
-        Script.python_class = self.python_class
+        ScriptViewSet._get_script = self.get_test_script
 
     def test_get_script(self):
         module = ScriptModule.objects.get(
@@ -793,7 +797,7 @@ class ScriptTest(APITestCase):
             file_path='/var/tmp/script.py'
         )
         script = module.scripts.all().first()
-        url = reverse('extras-api:script-detail', kwargs={'pk': script.pk})
+        url = reverse('extras-api:script-detail', kwargs={'pk': None})
         response = self.client.get(url, **self.header)
 
         self.assertEqual(response.data['name'], self.TestScriptClass.Meta.name)
