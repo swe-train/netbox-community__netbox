@@ -241,7 +241,7 @@ class ScriptViewSet(ModelViewSet):
 
     def post(self, request, pk):
         """
-        Run a Script identified by the name and return the pending Job as the result
+        Run a Script identified by the name or pk and return the pending Job as the result
         """
 
         if not request.user.has_perm('extras.run_script'):
