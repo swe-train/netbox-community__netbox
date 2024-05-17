@@ -217,12 +217,17 @@ class ScriptViewSet(ModelViewSet):
     lookup_value_regex = '[^/]+'  # Allow dots
 
     def _get_script(self, pk):
-        try:
-            module_name, script_name = pk.split('.', maxsplit=1)
-        except ValueError:
-            raise Http404
+        if pk.isnumeric():
+            script = get_object_or_404(self.queryset, pk=pk)
+            module = script.module
+        else:
+            try:
+                module_name, script_name = pk.split('.', maxsplit=1)
+            except ValueError:
+                raise Http404
 
-        module, script = get_module_and_script(module_name, script_name)
+            module, script = get_module_and_script(module_name, script_name)
+
         if script is None:
             raise Http404
 
