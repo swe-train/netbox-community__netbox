@@ -43,16 +43,6 @@ MODULEBAY_STATUS = """
 """
 
 
-class ConnectionDeviceComponentTableMixin:
-    class Meta:
-        row_attrs = {
-            'data-name': lambda record: record.name,
-            'data-mark-connected': lambda record: "true" if record.mark_connected else "false",
-            'data-cable-status': lambda record: record.cable.status if record.cable else "",
-            'data-type': lambda record: record.type
-        }
-
-
 #
 # Device roles
 #
@@ -337,6 +327,14 @@ class CableTerminationTable(NetBoxTable):
         verbose_name=_('Mark Connected'),
     )
 
+    class Meta:
+        row_attrs = {
+            'data-name': lambda record: record.name,
+            'data-mark-connected': lambda record: "true" if record.mark_connected else "false",
+            'data-cable-status': lambda record: record.cable.status if record.cable else "",
+            'data-type': lambda record: record.type
+        }
+
     def value_link_peer(self, value):
         return ', '.join([
             f"{termination.parent_object} > {termination}" for termination in value
@@ -384,7 +382,7 @@ class DeviceConsolePortTable(ConsolePortTable):
         extra_buttons=CONSOLEPORT_BUTTONS
     )
 
-    class Meta(ConnectionDeviceComponentTableMixin.Meta, DeviceComponentTable.Meta):
+    class Meta(CableTerminationTable.Meta, DeviceComponentTable.Meta):
         model = models.ConsolePort
         fields = (
             'pk', 'id', 'name', 'module_bay', 'module', 'label', 'type', 'speed', 'description', 'mark_connected',
@@ -426,7 +424,7 @@ class DeviceConsoleServerPortTable(ConsoleServerPortTable):
         extra_buttons=CONSOLESERVERPORT_BUTTONS
     )
 
-    class Meta(ConnectionDeviceComponentTableMixin.Meta, DeviceComponentTable.Meta):
+    class Meta(CableTerminationTable.Meta, DeviceComponentTable.Meta):
         model = models.ConsoleServerPort
         fields = (
             'pk', 'id', 'name', 'module_bay', 'module', 'label', 'type', 'speed', 'description', 'mark_connected',
@@ -475,7 +473,7 @@ class DevicePowerPortTable(PowerPortTable):
         extra_buttons=POWERPORT_BUTTONS
     )
 
-    class Meta(ConnectionDeviceComponentTableMixin.Meta, DeviceComponentTable.Meta):
+    class Meta(CableTerminationTable.Meta, DeviceComponentTable.Meta):
         model = models.PowerPort
         fields = (
             'pk', 'id', 'name', 'module_bay', 'module', 'label', 'type', 'maximum_draw', 'allocated_draw',
@@ -523,7 +521,7 @@ class DevicePowerOutletTable(PowerOutletTable):
         extra_buttons=POWEROUTLET_BUTTONS
     )
 
-    class Meta(ConnectionDeviceComponentTableMixin.Meta, DeviceComponentTable.Meta):
+    class Meta(CableTerminationTable.Meta, DeviceComponentTable.Meta):
         model = models.PowerOutlet
         fields = (
             'pk', 'id', 'name', 'module_bay', 'module', 'label', 'type', 'power_port', 'feed_leg', 'description',
@@ -723,7 +721,7 @@ class DeviceFrontPortTable(FrontPortTable):
         extra_buttons=FRONTPORT_BUTTONS
     )
 
-    class Meta(ConnectionDeviceComponentTableMixin.Meta, DeviceComponentTable.Meta):
+    class Meta(CableTerminationTable.Meta, DeviceComponentTable.Meta):
         model = models.FrontPort
         fields = (
             'pk', 'id', 'name', 'module_bay', 'module', 'label', 'type', 'rear_port', 'rear_port_position',
@@ -770,7 +768,7 @@ class DeviceRearPortTable(RearPortTable):
         extra_buttons=REARPORT_BUTTONS
     )
 
-    class Meta(ConnectionDeviceComponentTableMixin.Meta, DeviceComponentTable.Meta):
+    class Meta(CableTerminationTable.Meta, DeviceComponentTable.Meta):
         model = models.RearPort
         fields = (
             'pk', 'id', 'name', 'module_bay', 'module', 'label', 'type', 'positions', 'description', 'mark_connected',
