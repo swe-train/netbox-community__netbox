@@ -405,6 +405,14 @@ class PowerPortTypeChoices(ChoiceSet):
     TYPE_MOLEX_MICRO_FIT_2X4 = 'molex-micro-fit-2x4'
     # Direct current (DC)
     TYPE_DC = 'dc-terminal'
+    # IEC 60130-10
+    TYPE_IEC_60130_A_55_21 = 'iec-60130-a-55mm-21mm'
+    TYPE_IEC_60130_A_55_25 = 'iec-60130-a-55mm-25mm'
+    TYPE_IEC_60130_B_60_21 = 'iec-60130-b-60mm-21mm'
+    TYPE_IEC_60130_B_60_25 = 'iec-60130-b-60mm-25mm'
+    TYPE_IEC_60130_C_38_11 = 'iec-60130-c-38mm-11mm'
+    TYPE_IEC_60130_D_63_31 = 'iec-60130-d-63mm-31mm'
+    TYPE_IEC_60130_E_34_13 = 'iec-60130-e-34mm-13mm'
     # Proprietary
     TYPE_SAF_D_GRID = 'saf-d-grid'
     TYPE_NEUTRIK_POWERCON_20A = 'neutrik-powercon-20'
@@ -531,6 +539,15 @@ class PowerPortTypeChoices(ChoiceSet):
         )),
         ('DC', (
             (TYPE_DC, 'DC Terminal'),
+        )),
+        ('IEC 60130-10', (
+            (TYPE_IEC_60130_A_55_21, 'Type A: 5.5 mm OD, 2.1 mm ID'),
+            (TYPE_IEC_60130_A_55_25, 'Type A: 5.5 mm OD, 2.5 mm ID'),
+            (TYPE_IEC_60130_B_60_21, 'Type B: 6.0 mm OD, 2.1 mm ID'),
+            (TYPE_IEC_60130_B_60_25, 'Type B: 6.0 mm OD, 2.5 mm ID'),
+            (TYPE_IEC_60130_C_38_11, 'Type C: 3.8 mm OD, 1.1 mm ID'),
+            (TYPE_IEC_60130_D_63_31, 'Type D: 6.3 mm OD, 3.1 mm ID'),
+            (TYPE_IEC_60130_E_34_13, 'Type E: 3.4 mm OD, 1.3 mm ID'),
         )),
         (_('Proprietary'), (
             (TYPE_SAF_D_GRID, 'Saf-D-Grid'),
