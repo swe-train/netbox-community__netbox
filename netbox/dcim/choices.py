@@ -945,6 +945,9 @@ class InterfaceTypeChoices(ChoiceSet):
     TYPE_NG_PON2 = 'ng-pon2'
     TYPE_EPON = 'epon'
     TYPE_10G_EPON = '10g-epon'
+    TYPE_BPON = 'bpon'
+    TYPE_25G_PON = '25g-pon'
+    TYPE_50G_PON = 'huawei-50g-pon'
 
     # Stacking
     TYPE_STACKWISE = 'cisco-stackwise'
@@ -1134,6 +1137,9 @@ class InterfaceTypeChoices(ChoiceSet):
                 (TYPE_NG_PON2, 'NG-PON2 (TWDM-PON) (4x10 Gbps)'),
                 (TYPE_EPON, 'EPON (1 Gbps)'),
                 (TYPE_10G_EPON, '10G-EPON (10 Gbps)'),
+                (TYPE_BPON, 'BPON (622 Mbps / 155Mbps)'),
+                (TYPE_25G_PON, '25G-PON (25 Gbps)'),
+                (TYPE_50G_PON, 'Huawei 50G-PON (50 Gbps)'),
             )
         ),
         (
